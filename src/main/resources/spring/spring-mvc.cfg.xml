@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans          
+	http://www.springframework.org/schema/beans/spring-beans.xsd           
+	http://www.springframework.org/schema/context          
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd           
+	http://www.springframework.org/schema/mvc          
+	http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+	
+	<mvc:annotation-driven></mvc:annotation-driven>
+
+	
+	<context:component-scan base-package="com.neiquan.meiyiquan" ></context:component-scan>
+	<!-- 
+	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	 -->
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!--&lt;!&ndash; 对所有的请求拦截使用/** ,对某个模块下的请求拦截使用：/myPath/* &ndash;&gt;-->
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/login/*" />
+			<mvc:exclude-mapping path="/app/js/**"/>
+            <mvc:exclude-mapping path="/app/css/**"/>
+            <mvc:exclude-mapping path="/app/img/**"/>
+            <mvc:exclude-mapping path="/app/share/**"/>
+			<ref bean="islogin" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"></bean>
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		p:defaultEncoding="utf-8">
+		<!-- 50Mb -->
+		<property name="maxUploadSize" value="52480000"></property>
+	</bean>
+
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/app/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<mvc:resources location="/app/" mapping="/app/**"></mvc:resources>
+	
+	<bean id="exceptionResolver"
+		class="com.neiquan.meiyiquan.interceptor.ExceptionUrl">
+ 	</bean>
+ 	
+ 	<bean id="islogin"
+		class="com.neiquan.meiyiquan.interceptor.IsLoginInterceptor">
+ 	</bean>
+ 	
+ 	<bean id="qcpagetype" class="com.qc.util.tag.QcPageType">
+ 		<property name="showPageCount" value="5"></property>
+ 	</bean>
+	
+</beans>
